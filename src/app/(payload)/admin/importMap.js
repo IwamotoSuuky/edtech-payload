@@ -21,7 +21,7 @@ import { BlockquoteFeatureClient as BlockquoteFeatureClient_e70f5e05f09f93e00b99
 import { UploadFeatureClient as UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { ColorPickerFieldComponent as ColorPickerFieldComponent_95f860801d0381344387ae1d8e2f4d24 } from '@innovixx/payload-color-picker-field/components'
+import { DropableZones as DropableZones_564b4e9fd25345bf3dc118ccd562b115 } from '@/app/(payload)/custom/DropableZones'
 import { AssignDropzones as AssignDropzones_94bd6f365311723501e4c9d18d128388 } from '@/app/(payload)/custom/AssignDropzones'
 import { AssignDropableObjects as AssignDropableObjects_4f1103abef7453f51af31cfc4f49dbcd } from '@/app/(payload)/custom/AssignDropableObjects'
 import { Preview as Preview_be6d5ecfbf06714fd5472a24a57bb463 } from '@/app/(payload)/custom/QuestionPreview'
@@ -50,7 +50,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UploadFeatureClient": UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#InlineToolbarFeatureClient": InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "@innovixx/payload-color-picker-field/components#ColorPickerFieldComponent": ColorPickerFieldComponent_95f860801d0381344387ae1d8e2f4d24,
+  "@/app/(payload)/custom/DropableZones#DropableZones": DropableZones_564b4e9fd25345bf3dc118ccd562b115,
   "@/app/(payload)/custom/AssignDropzones#AssignDropzones": AssignDropzones_94bd6f365311723501e4c9d18d128388,
   "@/app/(payload)/custom/AssignDropableObjects#AssignDropableObjects": AssignDropableObjects_4f1103abef7453f51af31cfc4f49dbcd,
   "@/app/(payload)/custom/QuestionPreview#Preview": Preview_be6d5ecfbf06714fd5472a24a57bb463

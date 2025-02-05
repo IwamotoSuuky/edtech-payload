@@ -126,8 +126,7 @@ export interface Question {
             y: number;
             width: number;
             height: number;
-            color: string;
-            shape?: ('rectangle' | 'circle') | null;
+            stroke: string;
             id?: string | null;
           }[]
         | null;
@@ -271,8 +270,7 @@ export interface QuestionsSelect<T extends boolean = true> {
                     y?: T;
                     width?: T;
                     height?: T;
-                    color?: T;
-                    shape?: T;
+                    stroke?: T;
                     id?: T;
                   };
               dropableObjects?:

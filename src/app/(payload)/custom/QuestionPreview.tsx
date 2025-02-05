@@ -25,14 +25,11 @@ export const Preview: React.FC = () => {
 
     if (imageId) fetchImage(imageId)
   }, [imageId])
-  console.log(content)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
-      // canvas.width = 600 // Set the width attribute
-      // canvas.height = 400 // Set the height attribute
       const ctx = canvas.getContext('2d')
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -51,79 +48,63 @@ export const Preview: React.FC = () => {
     }
   }, [dropableZones])
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-      }}
-    >
-      {content?.question && (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-          }}
-        >
-          <h2>Question</h2>
-          <RichText data={content?.question} />
-        </div>
-      )}
-      {content?.question && (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-          }}
-        >
-          <h2>Selected Question Type</h2>
-          <h3>{content?.selectedQuestionType}</h3>
-        </div>
-      )}
-      {content?.dragDropQuestion && (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-          }}
-        >
-          <h2>Drag & Drop Question</h2>
-          {content?.dragDropQuestion?.questionImage && (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
-                marginLeft: '1rem',
-              }}
-            >
-              <h2>Dropzone Background Image</h2>
-              {image && <Image width={600} height={400} src={image?.url} alt={image.alt} />}
-            </div>
-          )}
-          {content?.dragDropQuestion?.dropableZones && (
-            <div style={{ marginLeft: '1rem' }}>
-              <h2 style={{ marginBottom: '1rem' }}>Dropable Zones</h2>
-              <div style={{ position: 'relative' }}>
+    <>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+        }}
+      >
+        {content?.question && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
+            <h2>Question</h2>
+            <RichText data={content?.question} />
+          </div>
+        )}
+        {content?.question && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
+            <h2>Selected Question Type</h2>
+            <h3>{content?.selectedQuestionType}</h3>
+          </div>
+        )}
+        {content?.dragDropQuestion && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
+            <h2>Drag & Drop Question</h2>
+            {content?.dragDropQuestion?.questionImage && (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                  marginLeft: '1rem',
+                }}
+              >
+                <h2>Dropzone Background Image</h2>
                 {image && <Image width={600} height={400} src={image?.url} alt={image.alt} />}
-                <canvas
-                  ref={canvasRef}
-                  width={600}
-                  height={400}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    border: '1px solid #000000',
-                  }}
-                />
               </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+            )}
+          </div>
+        )}
+      </div>
+    </>
   )
 }

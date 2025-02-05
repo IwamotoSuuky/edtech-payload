@@ -21,12 +21,16 @@
     "@payloadcms/payload-cloud": "latest",
     "@payloadcms/richtext-lexical": "^3.20.0",
     "@payloadcms/storage-vercel-blob": "latest",
+    "canvas": "^3.1.0",
     "cross-env": "^7.0.3",
     "graphql": "^16.8.1",
+    "konva": "^9.3.18",
     "next": "15.1.5",
     "payload": "latest",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "react-konva": "^19.0.2",
+    "use-image": "^1.1.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

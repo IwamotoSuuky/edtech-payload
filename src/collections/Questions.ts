@@ -1,6 +1,5 @@
 import { FixedToolbarFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
-import { colorPickerField } from '@innovixx/payload-color-picker-field'
 
 export const Questions: CollectionConfig = {
   slug: 'questions',
@@ -59,18 +58,13 @@ export const Questions: CollectionConfig = {
                     { name: 'y', type: 'number', required: true },
                     { name: 'width', type: 'number', required: true },
                     { name: 'height', type: 'number', required: true },
-                    colorPickerField({
-                      name: 'color',
-                      label: 'Color',
-                      required: true,
-                    }),
-                    {
-                      name: 'shape',
-                      type: 'select',
-                      options: ['rectangle', 'circle'],
-                      defaultValue: 'circle',
-                    },
+                    { name: 'stroke', type: 'text', required: true },
                   ],
+                  admin: {
+                    components: {
+                      Field: '@/app/(payload)/custom/DropableZones#DropableZones',
+                    },
+                  },
                 },
                 {
                   name: 'dropableObjects',
