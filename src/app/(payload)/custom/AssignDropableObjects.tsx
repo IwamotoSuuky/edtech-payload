@@ -1,71 +1,137 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import type { TextFieldClientComponent } from 'payload'
-import { useField, useAllFormFields } from '@payloadcms/ui'
+import Image from 'next/image'
 import { useState } from 'react'
-import { getSiblingData } from 'payload/shared'
 
-export const AssignDropableObjects: TextFieldClientComponent = ({ path }) => {
+type Props = {
+  zone: any
+  assignDropableZones: any
+  dropableObjects: any
+  addFieldRow: any
+  replaceFieldRow: any
+  path: any
+  index: number
+}
+
+export const AssignDropableObjects = ({
+  zone,
+  assignDropableZones,
+  dropableObjects,
+  addFieldRow,
+  replaceFieldRow,
+  path,
+  index,
+}: Props) => {
   const [showDropdown, setShowDropdown] = useState(false)
-  const { value, setValue } = useField({ path })
-  const [fields] = useAllFormFields()
-  const data = getSiblingData(fields, 'dragDropQuestion')
-  const objects = data?.content?.dragDropQuestion?.dropableObjects
-  const onSelect = (id: string) => {
-    setValue(id)
+  const findAssignedZone = assignDropableZones
+    ? assignDropableZones.find((z: any) => zone.id === z.dropableZoneId)
+    : undefined
+  const findAssignedObject = findAssignedZone?.dropableObjectId
+    ? dropableObjects.find((obj: any) => obj.id === findAssignedZone.dropableObjectId)
+    : undefined
+  const handleClick = () => {
     setShowDropdown(!showDropdown)
   }
-  const handleSelect = () => {
+  const onClickObject = (dropableObjectId: any, dropableZoneId: any) => {
+    const findZoneIndex =
+      assignDropableZones && assignDropableZones?.length > 0
+        ? assignDropableZones.findIndex((adz: any) => adz.dropableZoneId === dropableZoneId)
+        : undefined
+    if (Number.isInteger(findZoneIndex) && findZoneIndex !== -1) {
+      replaceFieldRow({
+        schemaPath: 'content.dragDropQuestion.assignDropableZones',
+        path: path,
+        rowIndex: findZoneIndex,
+        subFieldState: {
+          dropableObjectId: {
+            value: dropableObjectId,
+          },
+          dropableZoneId: {
+            value: dropableZoneId,
+          },
+        },
+      })
+    } else {
+      addFieldRow({
+        schemaPath: 'content.dragDropQuestion.assignDropableZones',
+        path: path,
+        subFieldState: {
+          dropableObjectId: {
+            value: dropableObjectId,
+          },
+          dropableZoneId: {
+            value: dropableZoneId,
+          },
+        },
+      })
+    }
     setShowDropdown(!showDropdown)
   }
-  const currentObject = objects
-    ? objects.find((obj: any) => obj.id === value)
-    : { name: 'Select Dropable Object' }
-  const buttonStyle = {
-    color: 'white',
-    backgroundColor: 'black',
-    border: '1px solid gray',
-    padding: '10px',
-    cursor: 'pointer',
-  }
-
-  const dropdownStyle = {
-    display: 'flex',
-    top: '40px',
-    backgroundColor: 'black',
-    border: '1px solid gray',
-  }
-  if (objects && objects?.length > 0) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'row', position: 'relative' }}>
-        {(value as string) ? (
-          <button type="button" onClick={handleSelect} style={buttonStyle}>
-            {currentObject.name}
-          </button>
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem',
+        marginTop: '1rem',
+        position: 'relative',
+      }}
+    >
+      <button
+        type="button"
+        style={{
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '220px',
+        }}
+        onClick={handleClick}
+      >
+        {findAssignedObject ? (
+          <>
+            <p>{findAssignedObject.name}</p>
+            {findAssignedObject?.url && (
+              <Image src={findAssignedObject.url} width={150} height={200} alt="" />
+            )}
+          </>
         ) : (
-          <button type="button" onClick={handleSelect} style={buttonStyle}>
-            Select Dropable Object
-          </button>
+          <p>Select an object</p>
         )}
-        {showDropdown && objects?.length > 0 && (
-          <div
-            style={{ ...dropdownStyle, flexDirection: 'column', position: 'absolute', zIndex: 50 }}
-          >
-            {objects.map((obj: any) => {
-              return (
-                <button
-                  type="button"
-                  key={obj.id}
-                  onClick={() => onSelect(obj.id)}
-                  style={buttonStyle}
-                >
-                  {obj.name}
-                </button>
-              )
-            })}
-          </div>
-        )}
-      </div>
-    )
-  }
+      </button>
+      {showDropdown && (
+        <div
+          style={{
+            position: 'absolute',
+            top: findAssignedObject ? '195px' : '25px',
+            display: 'flex',
+            flexDirection: 'column',
+            width: '220px',
+            zIndex: 50,
+            border: '3px solid orange',
+          }}
+        >
+          {dropableObjects.map((dropObj: any) => {
+            return (
+              <button
+                key={dropObj.id}
+                type="button"
+                style={{
+                  display: 'flex',
+                  gap: '10px',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onClick={() => onClickObject(dropObj.id, zone.id)}
+              >
+                <p>{dropObj.name}</p>
+                {dropObj?.url && <Image src={dropObj.url} width={150} height={200} alt="" />}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
 }

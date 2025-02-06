@@ -45,6 +45,10 @@ export const Questions: CollectionConfig = {
               type: 'group',
               fields: [
                 {
+                  name: 'questionText',
+                  type: 'textarea',
+                },
+                {
                   name: 'questionImage',
                   type: 'upload',
                   relationTo: 'media',
@@ -84,27 +88,21 @@ export const Questions: CollectionConfig = {
                   type: 'array',
                   fields: [
                     {
-                      name: 'assignDropableZone',
+                      name: 'dropableZoneId',
                       type: 'text',
                       required: true,
-                      admin: {
-                        components: {
-                          Field: '@/app/(payload)/custom/AssignDropzones#AssignDropzones',
-                        },
-                      },
                     },
                     {
-                      name: 'assignDropableObject',
+                      name: 'dropableObjectId',
                       type: 'text',
                       required: true,
-                      admin: {
-                        components: {
-                          Field:
-                            '@/app/(payload)/custom/AssignDropableObjects#AssignDropableObjects',
-                        },
-                      },
                     },
                   ],
+                  admin: {
+                    components: {
+                      Field: '@/app/(payload)/custom/AssignDropZones#AssignDropZones',
+                    },
+                  },
                 },
               ],
               admin: {

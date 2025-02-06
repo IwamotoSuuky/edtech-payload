@@ -119,6 +119,7 @@ export interface Question {
     };
     selectedQuestionType?: ('MCQ' | 'fill_in_the_gap' | 'drag_and_drop') | null;
     dragDropQuestion?: {
+      questionText?: string | null;
       questionImage?: (string | null) | Media;
       dropableZones?:
         | {
@@ -139,8 +140,8 @@ export interface Question {
         | null;
       assignDropableZones?:
         | {
-            assignDropableZone: string;
-            assignDropableObject: string;
+            dropableZoneId: string;
+            dropableObjectId: string;
             id?: string | null;
           }[]
         | null;
@@ -262,6 +263,7 @@ export interface QuestionsSelect<T extends boolean = true> {
         dragDropQuestion?:
           | T
           | {
+              questionText?: T;
               questionImage?: T;
               dropableZones?:
                 | T
@@ -283,8 +285,8 @@ export interface QuestionsSelect<T extends boolean = true> {
               assignDropableZones?:
                 | T
                 | {
-                    assignDropableZone?: T;
-                    assignDropableObject?: T;
+                    dropableZoneId?: T;
+                    dropableObjectId?: T;
                     id?: T;
                   };
             };

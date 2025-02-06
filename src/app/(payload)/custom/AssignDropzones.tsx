@@ -1,77 +1,123 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import type { TextFieldClientComponent } from 'payload'
-import { useField, useFormFields } from '@payloadcms/ui'
-import { useState } from 'react'
+import { useForm, useAllFormFields } from '@payloadcms/ui'
+import { useEffect, useState } from 'react'
+import { Stage, Layer, Rect } from 'react-konva'
+import { getSiblingData } from 'payload/shared'
+import { ArrayFieldClientComponent } from 'payload'
+import { AssignDropableObjects } from './AssignDropableObjects'
 
-export const AssignDropzones: TextFieldClientComponent = ({ path }) => {
-  const [showDropdown, setShowDropdown] = useState(false)
-  const { value, setValue } = useField({ path })
-  const dropableZones = useFormFields(
-    ([fields, _]) => fields['content.dragDropQuestion.dropableZones'],
-  )
-  const zones = dropableZones?.rows
-  const onSelect = (id: string) => {
-    setValue(id)
-    setShowDropdown(!showDropdown)
-  }
-  const handleSelect = () => {
-    setShowDropdown(!showDropdown)
-  }
-  const buttonStyle = {
-    color: 'white',
-    backgroundColor: 'black',
-    border: '1px solid gray',
-    padding: '10px',
-    cursor: 'pointer',
+export const AssignDropZones: ArrayFieldClientComponent = ({ path }) => {
+  const [fields] = useAllFormFields()
+  const data = getSiblingData(fields, 'content')
+  const content = data?.content
+  const dropableZones = content?.dragDropQuestion?.dropableZones
+  const objects = content?.dragDropQuestion?.dropableObjects
+  const assignDropableZones = content?.dragDropQuestion?.assignDropableZones
+  const [dropableObjects, setDropableObjects] = useState<any[]>([])
+  const [isFetched, setIsFetched] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const { addFieldRow, replaceFieldRow } = useForm()
+  useEffect(() => {
+    const fetchImage = async (objects: any) => {
+      try {
+        setLoading(true)
+        const getImages = await Promise.all(
+          objects.map(async (obj: any) => {
+            const res = await fetch(`/api/media/${obj.questionImage}`, {
+              method: 'GET',
+              credentials: 'include',
+            })
+            const data = await res.json()
+            return {
+              id: obj.id,
+              name: obj.name,
+              url: data.url,
+            }
+          }),
+        )
+        setDropableObjects(getImages)
+        setIsFetched(true)
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching images:', error)
+        setLoading(false)
+      }
+    }
+
+    if (objects && !isFetched) fetchImage(objects)
+  }, [objects, isFetched])
+
+  if (loading) {
+    return <h4>Loading assigned dropzones...</h4>
   }
 
-  const dropdownStyle = {
-    display: 'flex',
-    top: '40px',
-    backgroundColor: 'black',
-    border: '1px solid gray',
-  }
-  const currentZoneText = zones?.findIndex((zone) => zone.id === value) ?? 0
-  if (zones && zones?.length > 0) {
+  if (
+    dropableZones &&
+    dropableZones?.length > 0 &&
+    dropableObjects &&
+    dropableObjects?.length > 0
+  ) {
     return (
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          position: 'relative',
+          flexDirection: 'column',
           marginBottom: '1rem',
         }}
       >
-        {(value as string) ? (
-          <button type="button" onClick={handleSelect} style={buttonStyle}>
-            Zone {`${currentZoneText + 1}`}
-          </button>
-        ) : (
-          <button type="button" onClick={handleSelect} style={buttonStyle}>
-            Select Dropzone
-          </button>
-        )}
-        {showDropdown && zones?.length > 0 && (
-          <div
-            style={{ ...dropdownStyle, flexDirection: 'column', position: 'absolute', zIndex: 50 }}
-          >
-            {zones.map((zone, index) => {
-              const text = `Zone ${index + 1}`
-              return (
-                <button
-                  type="button"
-                  key={zone.id}
-                  onClick={() => onSelect(zone.id)}
-                  style={buttonStyle}
+        <h2>Assign Dropzones</h2>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
+          }}
+        >
+          {dropableZones.map((zone: any, index: number) => {
+            return (
+              <div key={zone.id} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <Stage
+                  width={250}
+                  height={350}
+                  style={{ border: '1px solid grey', marginTop: 10, background: '#ffffff' }}
                 >
-                  {text}
-                </button>
-              )
-            })}
-          </div>
-        )}
+                  <Layer>
+                    <Rect
+                      key={zone.id}
+                      id={zone.id}
+                      x={50}
+                      y={30}
+                      width={zone.width}
+                      height={zone.height}
+                      stroke={zone.stroke}
+                      strokeWidth={5}
+                      cornerRadius={10}
+                    />
+                  </Layer>
+                </Stage>
+                <AssignDropableObjects
+                  zone={zone}
+                  dropableObjects={dropableObjects}
+                  assignDropableZones={assignDropableZones}
+                  addFieldRow={addFieldRow}
+                  replaceFieldRow={replaceFieldRow}
+                  path={path}
+                  index={index}
+                />
+              </div>
+            )
+          })}
+        </div>
       </div>
+    )
+  } else {
+    return (
+      <>
+        <h2>Assign Dropzones</h2>
+        <h4>No dropable zones are found</h4>
+      </>
     )
   }
 }

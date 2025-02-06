@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import React, { useState, useRef, useLayoutEffect, useEffect } from 'react'
@@ -125,8 +126,8 @@ export const DropableZones: ArrayFieldClientComponent = ({ path }) => {
     })
     requestAnimationFrame(() => {
       setSelectedId(newRect.id)
+      addRectangle(newRect)
     })
-    addRectangle(newRect)
   }
   const handleRemoveRectangle = () => {
     if (!selectedId) return

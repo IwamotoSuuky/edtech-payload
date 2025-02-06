@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useAllFormFields } from '@payloadcms/ui'
@@ -13,6 +14,13 @@ export const Preview: React.FC = () => {
   const [image, setImage] = useState<any | null>(null)
   const imageId = content?.dragDropQuestion?.questionImage
   const dropableZones = content?.dragDropQuestion?.dropableZones
+  const questionText = content?.dragDropQuestion?.questionText
+  const assignDropableZones = content?.dragDropQuestion?.assignDropableZones
+  const dropableObjects = content?.dragDropQuestion?.dropableObjects
+  const [objects, setObjects] = useState<any[]>([])
+  const [isImgFetched, setIsImgFetched] = useState(false)
+  const [isFetched, setIsFetched] = useState(false)
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     const fetchImage = async (imageId: string) => {
       const res = await fetch(`/api/media/${imageId}`, {
@@ -21,12 +29,50 @@ export const Preview: React.FC = () => {
       })
       const data = await res.json()
       setImage(data)
+      setIsImgFetched(true)
     }
 
-    if (imageId) fetchImage(imageId)
-  }, [imageId])
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+    if (imageId && !isImgFetched) fetchImage(imageId)
+  }, [imageId, isImgFetched])
+  useEffect(() => {
+    const fetchImage = async (asgnDropzones: any) => {
+      try {
+        const getImages = await Promise.all(
+          asgnDropzones.map(async (obj: any) => {
+            if (dropableObjects && dropableObjects?.length > 0) {
+              const findImage = dropableObjects.find(
+                (dropObject: any) => dropObject.id === obj.dropableObjectId,
+              )
+              if (findImage) {
+                setLoading(true)
+                const res = await fetch(`/api/media/${findImage.questionImage}`, {
+                  method: 'GET',
+                  credentials: 'include',
+                })
+                const data = await res.json()
+                return {
+                  id: obj.id,
+                  name: findImage.name,
+                  url: data.url,
+                }
+              }
+            } else {
+              return
+            }
+          }),
+        )
+        setObjects(getImages)
+        setIsFetched(true)
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching images:', error)
+        setLoading(false)
+      }
+    }
 
+    if (assignDropableZones && !isFetched) fetchImage(assignDropableZones)
+  }, [assignDropableZones, isFetched, dropableObjects])
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
@@ -89,17 +135,49 @@ export const Preview: React.FC = () => {
             }}
           >
             <h2>Drag & Drop Question</h2>
-            {content?.dragDropQuestion?.questionImage && (
+            {loading && <h3>Loading images...</h3>}
+            {!loading && content?.dragDropQuestion?.questionImage && (
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '1rem',
-                  marginLeft: '1rem',
+                  background: '#ffffff',
+                  maxWidth: '600px',
+                  paddingTop: '1rem',
                 }}
               >
-                <h2>Dropzone Background Image</h2>
+                {questionText && (
+                  <p
+                    style={{
+                      color: '#000000',
+                      fontWeight: 500,
+                      textAlign: 'center',
+                      fontSize: '16px',
+                      padding: '1rem',
+                    }}
+                  >
+                    {questionText}
+                  </p>
+                )}
                 {image && <Image width={600} height={400} src={image?.url} alt={image.alt} />}
+
+                {objects && objects?.length > 0 && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '3rem',
+                      justifyContent: 'center',
+                      width: '600px',
+                    }}
+                  >
+                    {objects.map((obj) => {
+                      return (
+                        <Image key={obj.id} src={obj.url} alt={obj.name} width={100} height={80} />
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>
