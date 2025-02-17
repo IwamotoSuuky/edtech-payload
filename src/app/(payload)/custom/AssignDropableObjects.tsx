@@ -21,7 +21,6 @@ export const AssignDropableObjects = ({
   addFieldRow,
   replaceFieldRow,
   path,
-  index,
 }: Props) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const findAssignedZone = assignDropableZones
