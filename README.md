@@ -4,7 +4,3 @@
 
 payload-vercel-mongodb-template
 
-## Attributes
-
-- **Database**: mongodb
-- **Storage Adapter**: vercelBlobStorage
